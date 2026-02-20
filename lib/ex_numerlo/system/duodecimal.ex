@@ -90,6 +90,8 @@ defmodule ExNumerlo.System.Duodecimal do
         false
 
       _ ->
+        # To avoid false positives with Arabic (base-10), we require
+        # at least one of the unique Pitman digits (↊ or ↋) to be present.
         Enum.all?(chars, &Enum.member?(@base_digits, &1)) and
           Enum.any?(chars, &Enum.member?([0x218A, 0x218B], &1))
     end

@@ -4,6 +4,8 @@ defmodule ExNumerlo.System.Roman do
 
   @max_roman 3999
 
+  # Standard Roman numerals are additive and subtractive.
+  # We use a descending list to greedily match the largest possible symbol.
   @roman_mapping [
     {1000, "M"},
     {900, "CM"},
@@ -46,6 +48,8 @@ defmodule ExNumerlo.System.Roman do
     |> do_from_roman()
   end
 
+  # We use recursive pattern matching to consume Roman symbols from left to right.
+  # Subtractive pairs (like CM) take precedence over single symbols (like C).
   defp do_from_roman([]), do: {:ok, 0}
   defp do_from_roman([?M | rest]), do: add_to_roman(rest, 1000)
   defp do_from_roman([?C, ?M | rest]), do: add_to_roman(rest, 900)

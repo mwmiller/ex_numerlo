@@ -4,7 +4,7 @@ defmodule ExNumerlo.MixProject do
   def project do
     [
       app: :ex_numerlo,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       description: description(),

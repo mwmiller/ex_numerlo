@@ -11,15 +11,24 @@ defmodule ExNumerloTest do
   alias ExNumerlo.System.Historical.Mayan
   alias ExNumerlo.System.Roman
 
-  test "systems/0 lists all available systems" do
-    systems = ExNumerlo.systems()
-    assert is_list(systems)
-    assert :arabic in systems
-    assert :roman in systems
-    assert :mayan in systems
-    assert :cuneiform in systems
-    assert :ethiopic in systems
-    assert :duodecimal in systems
+  test "systems/0 returns metadata map with consistent keys" do
+    meta = ExNumerlo.systems()
+    assert is_map(meta)
+
+    for {sys, data} <- meta do
+      assert is_map(data), "Metadata for #{sys} should be a map"
+      assert Map.has_key?(data, :description), "Metadata for #{sys} should have :description"
+      assert Map.has_key?(data, :base), "Metadata for #{sys} should have :base"
+      assert Map.has_key?(data, :type), "Metadata for #{sys} should have :type"
+      assert Map.has_key?(data, :range), "Metadata for #{sys} should have :range"
+    end
+
+    assert meta.arabic.base == 10
+    assert meta.roman.range == 1..3999
+    assert meta.mayan.base == 20
+    assert meta.cuneiform.base == 60
+    assert meta.duodecimal.base == 12
+    assert meta.ethiopic.type == :hybrid
   end
 
   test "encodes arabic (default)" do
@@ -64,7 +73,7 @@ defmodule ExNumerloTest do
 
   test "encodes and decodes aegean" do
     assert ExNumerlo.convert(42, to: :aegean) == {:ok, "𐄓𐄈"}
-    # 1: 𐄇, 10: 𐄐, 100: 𐄙, 1000: 𐄢, 10000: 𐄫
+    # 1: 𐄇, 10: 𐄐, 100: 0x10119 (𐄙), 1000: 0x10122 (𐄢), 10000: 0x1012B (𐄫)
     assert {:ok, "𐄢"} == ExNumerlo.convert(1000, to: :aegean)
     assert {:ok, "𐄫"} == ExNumerlo.convert(10_000, to: :aegean)
     assert {:ok, 1000} == ExNumerlo.convert("𐄢", to: :integer)

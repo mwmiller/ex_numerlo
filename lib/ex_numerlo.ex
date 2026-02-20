@@ -39,23 +39,218 @@ defmodule ExNumerlo do
           | :cuneiform
           | :duodecimal
 
-  # Ordered for auto-detection. More specific/unique systems first.
+  @systems_metadata %{
+    # Historical/Complex
+    aegean: %{
+      description: "Aegean numerals used by Minoan and Mycenaean civilizations (Linear A/B).",
+      base: 10,
+      type: :additive,
+      range: :positive
+    },
+    attic: %{
+      description: "Ancient Greek acrophonic system where symbols derive from number names.",
+      base: 10,
+      type: :additive,
+      range: :positive
+    },
+    mayan: %{
+      description: "Vigesimal (base-20) positional system with shell for zero, dots, and bars.",
+      base: 20,
+      type: :positional,
+      range: :non_negative
+    },
+    ethiopic: %{
+      description: "Ge'ez hierarchical additive-multiplicative system using segments of 100.",
+      base: 10,
+      type: :hybrid,
+      range: :positive
+    },
+    cuneiform: %{
+      description: "Babylonian sexagesimal (base-60) positional system using wedges.",
+      base: 60,
+      type: :positional,
+      range: :non_negative
+    },
+    roman: %{
+      description: "Standard Roman numerals using additive/subtractive notation.",
+      base: 10,
+      type: :additive,
+      range: 1..3999
+    },
+    # Specialized
+    duodecimal: %{
+      description: "Base-12 system using Pitman's notation (↊ for 10, ↋ for 11).",
+      base: 12,
+      type: :positional,
+      range: :all
+    },
+    fullwidth: %{
+      description: "Fixed-width forms of Arabic numerals used in CJK contexts.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    # Math
+    math_bold: %{
+      description: "Mathematical bold serif digits.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    math_double_struck: %{
+      description: "Mathematical blackboard bold digits.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    math_monospace: %{
+      description: "Mathematical fixed-width digits.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    math_sans: %{
+      description: "Mathematical sans-serif digits.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    math_sans_bold: %{
+      description: "Mathematical bold sans-serif digits.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    # Modern Positional
+    arabic: %{
+      description: "Standard Western Arabic numerals (0-9).",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    arabic_indic: %{
+      description: "Standard Arabic-Indic numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    extended_arabic_indic: %{
+      description: "Eastern Arabic-Indic numerals (Persian/Urdu).",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    devanagari: %{
+      description: "Numerals used with the Devanagari script.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    bengali: %{
+      description: "Bengali-Assamese numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    gurmukhi: %{
+      description: "Gurmukhi (Punjabi) script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    gujarati: %{
+      description: "Gujarati script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    oriya: %{
+      description: "Oriya (Odia) script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    tamil: %{
+      description: "Tamil script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    telugu: %{
+      description: "Telugu script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    kannada: %{
+      description: "Kannada script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    malayalam: %{
+      description: "Malayalam script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    thai: %{
+      description: "Thai script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    lao: %{
+      description: "Lao script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    tibetan: %{
+      description: "Tibetan script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    burmese: %{
+      description: "Burmese script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    khmer: %{
+      description: "Khmer script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    },
+    mongolian: %{
+      description: "Traditional Mongolian script numerals.",
+      base: 10,
+      type: :positional,
+      range: :all
+    }
+  }
+
+  # This list defines the priority for auto-detection.
+  # More specific systems (unique glyphs) are checked first to prevent
+  # false positives in more generic systems (like standard digits).
   @all_systems [
-    # Historical/Complex (Unique glyphs)
+    # Unique/Complex glyphs take priority
     :aegean,
     :attic,
     :mayan,
     :ethiopic,
     :cuneiform,
     :roman,
-    # Specialized/Math
+    # Specialized digits
     :math_bold,
     :math_double_struck,
     :math_sans,
     :math_sans_bold,
     :math_monospace,
     :fullwidth,
-    # Modern Positional
+    # Standard script digits
     :thai,
     :lao,
     :tibetan,
@@ -71,50 +266,26 @@ defmodule ExNumerlo do
     :telugu,
     :kannada,
     :malayalam,
-    # Arabic and its direct variants
+    # Generic digits last
     :arabic,
     :arabic_indic,
     :extended_arabic_indic,
-    # Duodecimal is VERY greedy if it overlaps with Arabic
     :duodecimal
   ]
 
   @doc """
-  Lists all supported numeral systems with descriptions and points of interest.
+  Returns metadata for all supported numeral systems.
 
-  ## Positional Systems (Base-10)
-  - `:arabic`: Standard Western Arabic numerals (0-9).
-  - `:arabic_indic`: Numerals used in much of the Arabic world (distinct from Western 'Arabic').
-  - `:extended_arabic_indic`: Eastern Arabic-Indic numerals (Persian/Urdu variant).
-  - `:devanagari`: Direct ancestors of the modern Indo-Arabic numeral system.
-  - `:bengali`, `:gurmukhi`, `:gujarati`, `:oriya`, `:tamil`, `:telugu`, `:kannada`, `:malayalam`:
-    Various Brahmic scripts of South Asia.
-  - `:thai`, `:lao`, `:tibetan`, `:burmese`, `:khmer`, `:mongolian`:
-    Standard positional systems for their respective scripts.
-  - `:fullwidth`: Fixed-width forms used in CJK contexts for alignment.
+  ## Examples
+      iex> ExNumerlo.systems()[:roman]
+      %{base: 10, description: "Standard Roman numerals using additive/subtractive notation.", range: 1..3999, type: :additive}
 
-  ## Mathematical Alphanumeric (Base-10)
-  - `:math_bold`, `:math_double_struck`, `:math_monospace`, `:math_sans`, `:math_sans_bold`:
-    Positional styles for mathematical notation.
-
-  ## Specialized & Historical
-  - `:duodecimal`: Base-12 system using Pitman's notation (↊ for 10, ↋ for 11). 
-    Auto-detection requires at least one unique digit to distinguish from Arabic.
-  - `:roman`: Standard Roman numerals (range 1-3999). 
-    Uses additive/subtractive notation (e.g., XIV for 14).
-  - `:aegean`: Used by Minoan and Mycenaean civilizations (Linear A/B). 
-    Purely additive system with symbols for powers of ten (1 to 10,000).
-  - `:attic`: Ancient Greek acrophonic system. 
-    Symbols are derived from the first letter of their name (e.g., Δ for Deka/10).
-  - `:mayan`: Vigesimal (base-20) positional system. 
-    Features a shell for zero, dots for units, and bars for fives.
-  - `:ethiopic`: Hierarchical additive-multiplicative system. 
-    Uses segments of 100 and a 10,000 multiplier (፼).
-  - `:cuneiform`: Babylonian sexagesimal (base-60) positional system. 
-    Internal digits (1-59) are additive using vertical and horizontal wedges.
+      iex> %{mayan: %{base: base}} = ExNumerlo.systems()
+      iex> base
+      20
   """
-  @spec systems() :: [system()]
-  def systems, do: @all_systems
+  @spec systems() :: %{system() => map()}
+  def systems, do: @systems_metadata
 
   @doc """
   Converts an input (integer, list of integers, or encoded string) to another numeral system.
@@ -144,6 +315,8 @@ defmodule ExNumerlo do
   def convert(numbers, opts) when is_list(numbers) do
     target_system = Keyword.get(opts, :to, :arabic)
 
+    # We use reduce_while here to ensure we stop immediately
+    # if any element in the list fails to encode.
     numbers
     |> Enum.reduce_while({:ok, []}, fn n, {:ok, acc} ->
       case convert(n, to: target_system) do
@@ -179,6 +352,8 @@ defmodule ExNumerlo do
   end
 
   defp do_decode(string, :auto, opts) do
+    # During auto-detection, we check systems in @all_systems order
+    # to prioritize more specific systems over generic ones.
     @all_systems
     |> Enum.find(fn sys ->
       case system_module(sys) do

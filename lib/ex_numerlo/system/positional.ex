@@ -31,6 +31,8 @@ defmodule ExNumerlo.System.Positional do
       defp apply_separator(digits, sep) do
         [sep_cp | _] = String.to_charlist(sep)
 
+        # We reverse the digits to group from the least significant digit (right-to-left)
+        # then reverse back to restore the original order with separators.
         digits
         |> Enum.reverse()
         |> Enum.chunk_every(3)
@@ -62,10 +64,12 @@ defmodule ExNumerlo.System.Positional do
         |> apply_sign(chars)
       end
 
+      # We handle both + and - signs here to be robust during parsing.
       defp strip_sign([?+ | rest]), do: rest
       defp strip_sign([?- | rest]), do: rest
       defp strip_sign(rest), do: rest
 
+      # If the original charlist started with a negative sign, we negate the result.
       defp apply_sign({:ok, val}, [?- | _]), do: {:ok, -val}
       defp apply_sign(res, _chars), do: res
 
@@ -82,6 +86,8 @@ defmodule ExNumerlo.System.Positional do
         string
         |> String.to_charlist()
         |> strip_sign()
+        # We reject common punctuation to allow detection of formatted numbers
+        # even when the specific separator isn't provided to the detector.
         |> Enum.reject(&Enum.member?([?,, ?., ?\s], &1))
         |> case do
           [] ->

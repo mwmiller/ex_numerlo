@@ -23,6 +23,8 @@ defmodule ExNumerlo.System.Historical do
     defp encode_aegean(n, [{val, base_cp} | rest]) when n >= val do
       count = div(n, val)
       remainder = rem(n, val)
+      # Aegean numerals use distinct glyphs for multiples of powers of ten
+      # (e.g., 1-9 are 0x10107 to 0x1010F).
       List.to_string([base_cp + count - 1]) <> encode_aegean(remainder, rest)
     end
 
@@ -91,6 +93,8 @@ defmodule ExNumerlo.System.Historical do
     defp do_encode(0, _), do: ""
 
     defp do_encode(n, [{val, cp} | _rest] = mapping) when n >= val do
+      # Attic Greek is acrophonic and additive. We consume symbols
+      # from largest to smallest.
       List.to_string([cp]) <> do_encode(n - val, mapping)
     end
 
@@ -134,6 +138,7 @@ defmodule ExNumerlo.System.Historical do
     def encode(n, opts \\ [])
 
     def encode(n, _opts) when is_integer(n) and n >= 0 do
+      # Mayan is a positional base-20 system.
       encoded =
         n
         |> Integer.digits(20)
@@ -149,6 +154,7 @@ defmodule ExNumerlo.System.Historical do
       string
       |> String.to_charlist()
       |> Enum.reduce_while({:ok, 0}, fn cp, {:ok, acc} ->
+        # Mayan digits 0-19 are contiguous in the Unicode block.
         case cp >= 0x1D2E0 and cp <= 0x1D2F3 do
           true -> {:cont, {:ok, acc * 20 + (cp - 0x1D2E0)}}
           false -> {:halt, {:error, :invalid_mayan_numeral}}
@@ -224,10 +230,15 @@ defmodule ExNumerlo.System.Historical do
       |> do_decode(0, 0, 0)
     end
 
-    defp do_decode([], current, coeff_acc, total), do: {:ok, total + coeff_acc + current}
+    # Ethiopic uses a complex hierarchical structure with segment closers
+    # for 100 (፻) and 10,000 (፼).
+    # base_acc: accumulates the value within the current block (0-9999)
+    # total: accumulates blocks of 10,000^N
+    # current: accumulates value within base-100 (0-99)
+    defp do_decode([], current, base_acc, total), do: {:ok, total + base_acc + current}
 
-    defp do_decode([0x137C | rest], current, coeff_acc, total) do
-      segment = coeff_acc + current
+    defp do_decode([0x137C | rest], current, base_acc, total) do
+      segment = base_acc + current
 
       coeff =
         case segment do
@@ -235,25 +246,28 @@ defmodule ExNumerlo.System.Historical do
           s -> s
         end
 
+      # ፼ (10,000) multiplies EVERYTHING that came before it in the current
+      # power-of-10,000 segment.
       do_decode(rest, 0, 0, (total + coeff) * 10_000)
     end
 
-    defp do_decode([0x137B | rest], current, coeff_acc, total) do
+    defp do_decode([0x137B | rest], current, base_acc, total) do
       coeff =
         case current do
           0 -> 1
           c -> c
         end
 
-      do_decode(rest, 0, coeff_acc + coeff * 100, total)
+      # ፻ (100) multiplies only the current 0-99 part.
+      do_decode(rest, 0, base_acc + coeff * 100, total)
     end
 
-    defp do_decode([cp | rest], current, coeff_acc, total) when cp >= 0x1372 and cp <= 0x137A do
-      do_decode(rest, current + (cp - 0x1372 + 1) * 10, coeff_acc, total)
+    defp do_decode([cp | rest], current, base_acc, total) when cp >= 0x1372 and cp <= 0x137A do
+      do_decode(rest, current + (cp - 0x1372 + 1) * 10, base_acc, total)
     end
 
-    defp do_decode([cp | rest], current, coeff_acc, total) when cp >= 0x1369 and cp <= 0x1371 do
-      do_decode(rest, current + (cp - 0x1369 + 1), coeff_acc, total)
+    defp do_decode([cp | rest], current, base_acc, total) when cp >= 0x1369 and cp <= 0x1371 do
+      do_decode(rest, current + (cp - 0x1369 + 1), base_acc, total)
     end
 
     defp do_decode(_, _, _, _), do: {:error, :invalid_ethiopic_numeral}
@@ -280,6 +294,9 @@ defmodule ExNumerlo.System.Historical do
     def encode(n, opts \\ [])
 
     def encode(n, _opts) when is_integer(n) and n >= 0 do
+      # Babylonian Cuneiform is a positional base-60 system.
+      # We use double spaces to separate sexagesimal place values
+      # to make them legible.
       encoded =
         n
         |> Integer.digits(60)
@@ -293,12 +310,16 @@ defmodule ExNumerlo.System.Historical do
     defp encode_digit(0), do: " "
 
     defp encode_digit(d) do
+      # Within each base-60 digit, values are represented additively
+      # using tens (𒌋) and units (𒁹).
       String.duplicate(List.to_string([0x1230B]), div(d, 10)) <>
         String.duplicate(List.to_string([0x12079]), rem(d, 10))
     end
 
     @impl ExNumerlo.System
     def decode(string, _opts \\ []) do
+      # We split by our chosen double-space separator to parse each
+      # sexagesimal digit individually.
       string
       |> String.split("  ")
       |> Enum.reduce_while({:ok, 0}, fn part, {:ok, acc} ->
