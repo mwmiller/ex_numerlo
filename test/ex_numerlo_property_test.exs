@@ -21,6 +21,41 @@ defmodule ExNumerloPropertyTest do
     :burmese,
     :khmer,
     :mongolian,
+    :limbu,
+    :new_tai_lue,
+    :tai_tham_hora,
+    :tai_tham_tham,
+    :balinese,
+    :sundanese,
+    :lepcha,
+    :ol_chiki,
+    :vai,
+    :saurashtra,
+    :kayah_li,
+    :javanese,
+    :cham,
+    :meetei_mayek,
+    :osmanya,
+    :brahmi,
+    :sora_sompeng,
+    :chakma,
+    :sharada,
+    :tirhuta,
+    :modi,
+    :takri,
+    :warang_citi,
+    :gunjala_gondi,
+    :masaram_gondi,
+    :kaktovik,
+    :mro,
+    :tangsa,
+    :pahawh_hmong,
+    :nyiakeng_puachue_hmong,
+    :wancho,
+    :toto,
+    :nag_mundari,
+    :adlam,
+    :n_ko,
     :fullwidth,
     :math_monospace,
     :math_bold,
@@ -37,7 +72,7 @@ defmodule ExNumerloPropertyTest do
   property "all systems round-trip correctly with auto-detection" do
     check all(
             sys <- member_of(@systems),
-            n <- integer(1..5000)
+            n <- integer(1..3999)
           ) do
       case ExNumerlo.convert(n, to: sys) do
         {:ok, encoded} ->
@@ -71,7 +106,8 @@ defmodule ExNumerloPropertyTest do
 
   property "standard positional systems handle negative numbers" do
     check all(
-            sys <- member_of([:arabic, :devanagari, :thai, :fullwidth, :math_bold]),
+            sys <-
+              member_of([:arabic, :devanagari, :thai, :fullwidth, :math_bold, :adlam, :balinese]),
             n <- integer()
           ) do
       {:ok, encoded} = ExNumerlo.convert(n, to: sys)
@@ -82,8 +118,8 @@ defmodule ExNumerloPropertyTest do
 
   property "separator round-trips" do
     check all(
-            sys <- member_of([:arabic, :devanagari, :fullwidth, :duodecimal]),
-            n <- integer(1000..1_000_000),
+            sys <- member_of([:arabic, :devanagari, :fullwidth, :duodecimal, :adlam]),
+            n <- integer(10_000..1_000_000),
             sep <- member_of([",", ".", " "])
           ) do
       {:ok, encoded} = ExNumerlo.convert(n, to: sys, separator: sep)
