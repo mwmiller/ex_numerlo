@@ -1,6 +1,9 @@
 defmodule ExNumerlo.System do
   @moduledoc """
-  A behaviour for numeral systems.
+  Defines the behaviour for all numeral systems supported by ExNumerlo.
+
+  Each system must implement functions for encoding integers, decoding strings,
+  and detecting if a string contains numerals belonging to that system.
   """
 
   @callback encode(integer(), keyword()) :: {:ok, String.t()} | {:error, term()}
