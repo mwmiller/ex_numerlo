@@ -4,13 +4,14 @@ defmodule ExNumerlo.MixProject do
   def project do
     [
       app: :ex_numerlo,
-      version: "0.2.0",
+      version: "0.3.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
       aliases: aliases(),
+      docs: docs(),
       name: "ExNumerlo",
       source_url: "https://github.com/mwmiller/ex_numerlo"
     ]
@@ -32,6 +33,17 @@ defmodule ExNumerlo.MixProject do
   defp aliases do
     [
       precommit: ["format --check-formatted", "credo --strict", "test"]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "ExNumerlo",
+      extras: ["README.md", "usage-rules.md"],
+      groups_for_modules: [
+        Core: [ExNumerlo],
+        Behaviours: [ExNumerlo.System]
+      ]
     ]
   end
 
