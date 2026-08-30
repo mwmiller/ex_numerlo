@@ -4,7 +4,7 @@ defmodule ExNumerlo.MixProject do
   def project do
     [
       app: :ex_numerlo,
-      version: "0.3.0",
+      version: "0.4.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -44,7 +44,7 @@ defmodule ExNumerlo.MixProject do
   defp docs do
     [
       main: "ExNumerlo",
-      extras: ["README.md", "usage-rules.md"],
+      extras: ["README.md", "CHANGELOG.md", "usage-rules.md"],
       groups_for_modules: [
         Core: [ExNumerlo],
         Behaviours: [ExNumerlo.System]
@@ -60,7 +60,7 @@ defmodule ExNumerlo.MixProject do
     [
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/mwmiller/ex_numerlo"},
-      files: ~w(lib .formatter.exs mix.exs README.md LICENSE usage-rules.md)
+      files: ~w(lib .formatter.exs mix.exs README.md CHANGELOG.md LICENSE usage-rules.md)
     ]
   end
 
