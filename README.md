@@ -70,6 +70,8 @@ The following systems are currently supported:
 
 *   **Modern Positional:** `:arabic`, `:arabic_indic`, `:extended_arabic_indic`, `:devanagari`, `:bengali`, `:gurmukhi`, `:gujarati`, `:oriya`, `:tamil`, `:sinhala`, `:telugu`, `:kannada`, `:malayalam`, `:thai`, `:lao`, `:tibetan`, `:burmese`, `:khmer`, `:mongolian`, `:adlam`, `:balinese`, `:chakma`, `:cham`, `:gunjala_gondi`, `:javanese`, `:kayah_li`, `:lepcha`, `:limbu`, `:masaram_gondi`, `:meetei_mayek`, `:modi`, `:mro`, `:n_ko`, `:new_tai_lue`, `:nyiakeng_puachue_hmong`, `:ol_chiki`, `:osmanya`, `:pahawh_hmong`, `:saurashtra`, `:sharada`, `:sora_sompeng`, `:sundanese`, `:tai_tham_hora`, `:tai_tham_tham`, `:takri`, `:tangsa`, `:tirhuta`, `:toto`, `:vai`, `:wancho`, `:warang_citi`, `:fullwidth`
 *   **Historical:** `:roman` (1..3999), `:aegean`, `:attic`, `:egyptian` (hieroglyphic, additive base-10), `:mayan` (base-20), `:ethiopic`, `:cuneiform` (base-60), `:brahmi`, `:kaktovik` (base-20)
+*   **Alphabetic (Letter) Numerals:** `:greek` (1..9999), `:armenian` (1..9999), `:hebrew` (1..999), `:cyrillic` (1..9999)
+*   **Sign-Value and Accounting:** `:arabic_abjad`, `:tamil_traditional`, `:sinhala_archaic`, `:kharosthi`, `:rumi`, `:siyaq_indic`, `:siyaq_ottoman`
 *   **Specialized:** `:duodecimal` (base-12 using ↊ and ↋), `:math_bold`, `:math_double_struck`, `:math_sans`, `:math_sans_bold`, `:math_monospace`
 *   **Programmer Bases:** `:binary` (base-2), `:octal` (base-8), `:hexadecimal` (base-16, digits 0-9 and A-F), `:base32` (base-32, digits 0-9 and A-V), `:base36` (base-36, digits 0-9 and A-Z)
 

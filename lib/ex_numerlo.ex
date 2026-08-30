@@ -25,6 +25,8 @@ defmodule ExNumerlo do
 
   ### Historical and Specialized
   - **Additive:** `:roman` (1-3999), `:aegean`, `:attic`, `:egyptian`, `:brahmi`
+  - **Alphabetic (Letter) Numerals:** `:greek` (1-9999), `:armenian` (1-9999), `:hebrew` (1-999), `:cyrillic` (1-9999)
+  - **Sign-Value and Accounting:** `:arabic_abjad`, `:tamil_traditional`, `:sinhala_archaic`, `:kharosthi`, `:rumi`, `:siyaq_indic`, `:siyaq_ottoman`
   - **Hybrid:** `:ethiopic`, `:han` (Chinese/Japanese myriad-based)
   - **Positional (Non-Base-10):** `:mayan` (Base-20), `:kaktovik` (Base-20), `:cuneiform` (Base-60), `:duodecimal` (Base-12)
   - **Programmer Bases:** `:binary` (Base-2), `:octal` (Base-8), `:hexadecimal` (Base-16), `:base32` (Base-32), `:base36` (Base-36)
@@ -126,6 +128,17 @@ defmodule ExNumerlo do
           | :aegean
           | :attic
           | :egyptian
+          | :greek
+          | :armenian
+          | :hebrew
+          | :cyrillic
+          | :arabic_abjad
+          | :tamil_traditional
+          | :sinhala_archaic
+          | :kharosthi
+          | :rumi
+          | :siyaq_indic
+          | :siyaq_ottoman
           | :mayan
           | :ethiopic
           | :cuneiform
@@ -161,6 +174,94 @@ defmodule ExNumerlo do
       type: :additive,
       range: :positive,
       example: "𓍢𓍢𓎆𓎆𓏺𓏺𓏺 (223)"
+    },
+    greek: %{
+      description:
+        "Ancient Greek (Milesian/Ionian) alphabetic numerals assigning letters to 1-9, 10-90, and 100-900 (alpha=1, stigma=6, koppa=90, sampi=900), with the keraia marker (͵) before letters for thousands.",
+      base: 10,
+      type: :additive,
+      range: 1..9999,
+      example: "͵βκϛ (2026)"
+    },
+    armenian: %{
+      description:
+        "Classical Armenian alphabetic numerals using uppercase letters, from Ա (ayb=1) to Ք (kʿe=9000). Used in pre-modern Armenian manuscripts and dating.",
+      base: 10,
+      type: :additive,
+      range: 1..9999,
+      example: "ՍԻԶ (2026)"
+    },
+    hebrew: %{
+      description:
+        "Hebrew gematria numerals assigning letter values from א (alef=1) to ת (tav=400), with final letter forms for 500-900 (khaf, mem, nun, pe, tsadi).",
+      base: 10,
+      type: :additive,
+      range: 1..999,
+      example: "קכג (123)"
+    },
+    cyrillic: %{
+      description:
+        "Early Cyrillic numerals modeled on the Greek alphabetic system, with a myriad-style thousands marker (҂) preceding the unit letters. Used in Old Church Slavonic before Arabic numerals.",
+      base: 10,
+      type: :additive,
+      range: 1..9999,
+      example: "҂ВКЅ (2026)"
+    },
+    arabic_abjad: %{
+      description:
+        "Arabic abjad numerals, an alphabetic sign-value system assigning values to Arabic letters (alif=1 through ghayn=1000). Used historically for numbering and in Islamic numerology.",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "قكج (123)"
+    },
+    tamil_traditional: %{
+      description:
+        "Traditional Tamil numerals combining unit digits (௧-௯) with distinct ten, hundred, and thousand signs (௰, ௱, ௲). The predecessor of the modern positional Tamil digits.",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "௱௰௰௩ (123)"
+    },
+    sinhala_archaic: %{
+      description:
+        "Archaic Sinhala numerals (U+111E0+), an additive sign-value system historically used in Sri Lanka before the modern Sinhala script digits.",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "𑇳𑇫𑇣 (123)"
+    },
+    kharosthi: %{
+      description:
+        "Kharosthi numerals (U+10A40+) from ancient Gandhara, with digits for 1-4 and signs for 10, 20, 100, and 1000 combined additively (e.g., 9 written as 4+4+1).",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "𐩆𐩅𐩂 (123)"
+    },
+    rumi: %{
+      description:
+        "Rumi (Fez) numerals (U+10E60+), a distinct sign-value system historically used in North Africa (Morocco) for dates and financial reckoning.",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "𐹲𐹪𐹢 (123)"
+    },
+    siyaq_indic: %{
+      description:
+        "Indic Siyaq accounting numerals (U+1EC70+) used in Mughal-era India and Persia for documents and currency, with distinct glyphs per digit place up to ten-thousands.",
+      base: 10,
+      type: :additive,
+      range: 1..99_999,
+      example: "𞲍𞱻𞱶 (2026)"
+    },
+    siyaq_ottoman: %{
+      description:
+        "Ottoman Siyaq accounting numerals (U+1ED00+) used in Ottoman Turkish financial documents, with distinct glyphs per digit place up to ten-thousands.",
+      base: 10,
+      type: :additive,
+      range: 1..99_999,
+      example: "𞴝𞴋𞴆 (2026)"
     },
     mayan: %{
       description:
@@ -732,6 +833,21 @@ defmodule ExNumerlo do
     :ethiopic,
     :cuneiform,
     :roman,
+    # Alphabetic letter systems (checked before generic digits)
+    :greek,
+    :armenian,
+    :hebrew,
+    :cyrillic,
+    :arabic_abjad,
+    # :tamil (positional) must precede :tamil_traditional: unit-only
+    # strings like "௧௧" are positional 11, not additive 1+1.
+    :tamil,
+    :tamil_traditional,
+    :sinhala_archaic,
+    :kharosthi,
+    :rumi,
+    :siyaq_indic,
+    :siyaq_ottoman,
     # Specialized digits
     :math_bold,
     :math_double_struck,
@@ -790,7 +906,6 @@ defmodule ExNumerlo do
     :gurmukhi,
     :gujarati,
     :oriya,
-    :tamil,
     :telugu,
     :kannada,
     :malayalam,
@@ -996,6 +1111,17 @@ defmodule ExNumerlo do
   defp system_module(:aegean), do: System.Historical.Aegean
   defp system_module(:attic), do: System.Historical.Attic
   defp system_module(:egyptian), do: System.Historical.Egyptian
+  defp system_module(:greek), do: System.Greek
+  defp system_module(:armenian), do: System.Armenian
+  defp system_module(:hebrew), do: System.Hebrew
+  defp system_module(:cyrillic), do: System.Cyrillic
+  defp system_module(:arabic_abjad), do: System.ArabicAbjad
+  defp system_module(:tamil_traditional), do: System.TamilTraditional
+  defp system_module(:sinhala_archaic), do: System.SinhalaArchaic
+  defp system_module(:kharosthi), do: System.Kharosthi
+  defp system_module(:rumi), do: System.Rumi
+  defp system_module(:siyaq_indic), do: System.SiyaqIndic
+  defp system_module(:siyaq_ottoman), do: System.SiyaqOttoman
   defp system_module(:mayan), do: System.Historical.Mayan
   defp system_module(:ethiopic), do: System.Historical.Ethiopic
   defp system_module(:cuneiform), do: System.Historical.Cuneiform

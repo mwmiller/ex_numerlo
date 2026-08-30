@@ -3,14 +3,25 @@ defmodule ExNumerloTest do
   doctest ExNumerlo
 
   alias ExNumerlo.System.Arabic
+  alias ExNumerlo.System.ArabicAbjad
+  alias ExNumerlo.System.Armenian
+  alias ExNumerlo.System.Cyrillic
   alias ExNumerlo.System.Duodecimal
+  alias ExNumerlo.System.Greek
+  alias ExNumerlo.System.Hebrew
   alias ExNumerlo.System.Historical.Aegean
   alias ExNumerlo.System.Historical.Attic
   alias ExNumerlo.System.Historical.Cuneiform
   alias ExNumerlo.System.Historical.Egyptian
   alias ExNumerlo.System.Historical.Ethiopic
   alias ExNumerlo.System.Historical.Mayan
+  alias ExNumerlo.System.Kharosthi
   alias ExNumerlo.System.Roman
+  alias ExNumerlo.System.Rumi
+  alias ExNumerlo.System.SinhalaArchaic
+  alias ExNumerlo.System.SiyaqIndic
+  alias ExNumerlo.System.SiyaqOttoman
+  alias ExNumerlo.System.TamilTraditional
 
   test "systems/0 returns metadata map with consistent keys" do
     meta = ExNumerlo.systems()
@@ -132,6 +143,17 @@ defmodule ExNumerloTest do
     refute Mayan.detect?("")
     refute Ethiopic.detect?("")
     refute Cuneiform.detect?("")
+    refute Greek.detect?("")
+    refute Armenian.detect?("")
+    refute Hebrew.detect?("")
+    refute Cyrillic.detect?("")
+    refute ArabicAbjad.detect?("")
+    refute TamilTraditional.detect?("")
+    refute SinhalaArchaic.detect?("")
+    refute Kharosthi.detect?("")
+    refute Rumi.detect?("")
+    refute SiyaqIndic.detect?("")
+    refute SiyaqOttoman.detect?("")
   end
 
   test "ethiopic large numbers and decoding" do
@@ -187,6 +209,37 @@ defmodule ExNumerloTest do
 
     assert {:error, :invalid_cuneiform_numeral} ==
              ExNumerlo.convert("A", from: :cuneiform, to: :integer)
+
+    assert {:error, :invalid_greek_numeral} == ExNumerlo.convert("A", from: :greek, to: :integer)
+
+    assert {:error, :invalid_armenian_numeral} ==
+             ExNumerlo.convert("A", from: :armenian, to: :integer)
+
+    assert {:error, :invalid_hebrew_numeral} ==
+             ExNumerlo.convert("A", from: :hebrew, to: :integer)
+
+    assert {:error, :invalid_cyrillic_numeral} ==
+             ExNumerlo.convert("A", from: :cyrillic, to: :integer)
+
+    assert {:error, :invalid_abjad_numeral} ==
+             ExNumerlo.convert("A", from: :arabic_abjad, to: :integer)
+
+    assert {:error, :invalid_tamil_traditional_numeral} ==
+             ExNumerlo.convert("A", from: :tamil_traditional, to: :integer)
+
+    assert {:error, :invalid_sinhala_archaic_numeral} ==
+             ExNumerlo.convert("A", from: :sinhala_archaic, to: :integer)
+
+    assert {:error, :invalid_kharosthi_numeral} ==
+             ExNumerlo.convert("A", from: :kharosthi, to: :integer)
+
+    assert {:error, :invalid_rumi_numeral} == ExNumerlo.convert("A", from: :rumi, to: :integer)
+
+    assert {:error, :invalid_siyaq_indic_numeral} ==
+             ExNumerlo.convert("A", from: :siyaq_indic, to: :integer)
+
+    assert {:error, :invalid_siyaq_ottoman_numeral} ==
+             ExNumerlo.convert("A", from: :siyaq_ottoman, to: :integer)
 
     assert {:error, :invalid_digit} == ExNumerlo.convert("A", from: :duodecimal, to: :integer)
   end
@@ -289,5 +342,73 @@ defmodule ExNumerloTest do
     assert {:error, :invalid_digit} == ExNumerlo.convert("W2", from: :base32, to: :integer)
     assert {:ok, 68} == ExNumerlo.convert("1W", to: :integer)
     assert {:ok, 60} == ExNumerlo.convert("1S", to: :integer)
+  end
+
+  test "encodes and decodes greek" do
+    assert {:ok, "ρκγ"} == ExNumerlo.convert(123, to: :greek)
+    assert {:ok, "͵βκϛ"} == ExNumerlo.convert(2026, to: :greek)
+    assert {:ok, "͵α"} == ExNumerlo.convert(1000, to: :greek)
+    assert {:ok, 2026} == ExNumerlo.convert("͵βκϛ", to: :integer)
+    assert {:ok, 123} == ExNumerlo.convert("ρκγ", from: :greek, to: :integer)
+    assert {:error, :not_positive} == ExNumerlo.convert(0, to: :greek)
+    assert {:error, :out_of_range} == ExNumerlo.convert(10_000, to: :greek)
+  end
+
+  test "encodes and decodes armenian" do
+    assert {:ok, "ՃԻԳ"} == ExNumerlo.convert(123, to: :armenian)
+    assert {:ok, "ՍԻԶ"} == ExNumerlo.convert(2026, to: :armenian)
+    assert {:ok, 2026} == ExNumerlo.convert("ՍԻԶ", to: :integer)
+  end
+
+  test "encodes and decodes hebrew" do
+    assert {:ok, "קכג"} == ExNumerlo.convert(123, to: :hebrew)
+    assert {:ok, "קצט"} == ExNumerlo.convert(199, to: :hebrew)
+    assert {:ok, 199} == ExNumerlo.convert("קצט", from: :hebrew, to: :integer)
+    assert {:ok, 123} == ExNumerlo.convert("קכג", to: :integer)
+    assert {:error, :out_of_range} == ExNumerlo.convert(1000, to: :hebrew)
+  end
+
+  test "encodes and decodes cyrillic" do
+    assert {:ok, "РКГ"} == ExNumerlo.convert(123, to: :cyrillic)
+    assert {:ok, "҂ВКЅ"} == ExNumerlo.convert(2026, to: :cyrillic)
+    assert {:ok, 2026} == ExNumerlo.convert("҂ВКЅ", to: :integer)
+  end
+
+  test "encodes and decodes arabic abjad" do
+    assert {:ok, "قكج"} == ExNumerlo.convert(123, to: :arabic_abjad)
+    assert {:ok, "غغكو"} == ExNumerlo.convert(2026, to: :arabic_abjad)
+    assert {:ok, 2026} == ExNumerlo.convert("غغكو", to: :integer)
+  end
+
+  test "encodes and decodes tamil traditional" do
+    assert {:ok, "௱௰௰௩"} == ExNumerlo.convert(123, to: :tamil_traditional)
+    assert {:ok, "௲௲௰௰௬"} == ExNumerlo.convert(2026, to: :tamil_traditional)
+    assert {:ok, 2026} == ExNumerlo.convert("௲௲௰௰௬", to: :integer)
+  end
+
+  test "encodes and decodes sinhala archaic" do
+    assert {:ok, "𑇳𑇫𑇣"} == ExNumerlo.convert(123, to: :sinhala_archaic)
+    assert {:ok, "𑇴𑇴𑇫𑇦"} == ExNumerlo.convert(2026, to: :sinhala_archaic)
+    assert {:ok, 2026} == ExNumerlo.convert("𑇴𑇴𑇫𑇦", to: :integer)
+  end
+
+  test "encodes and decodes kharosthi" do
+    assert {:ok, "𐩆𐩅𐩂"} == ExNumerlo.convert(123, to: :kharosthi)
+    assert {:ok, 123} == ExNumerlo.convert("𐩆𐩅𐩂", to: :integer)
+  end
+
+  test "encodes and decodes rumi" do
+    assert {:ok, "𐹲𐹪𐹢"} == ExNumerlo.convert(123, to: :rumi)
+    assert {:ok, 123} == ExNumerlo.convert("𐹲𐹪𐹢", to: :integer)
+  end
+
+  test "encodes and decodes siyaq systems" do
+    assert {:ok, "𞲃𞱻𞱳"} == ExNumerlo.convert(123, to: :siyaq_indic)
+    assert {:ok, "𞲍𞱻𞱶"} == ExNumerlo.convert(2026, to: :siyaq_indic)
+    assert {:ok, 2026} == ExNumerlo.convert("𞲍𞱻𞱶", to: :integer)
+
+    assert {:ok, "𞴓𞴋𞴃"} == ExNumerlo.convert(123, to: :siyaq_ottoman)
+    assert {:ok, "𞴝𞴋𞴆"} == ExNumerlo.convert(2026, to: :siyaq_ottoman)
+    assert {:ok, 2026} == ExNumerlo.convert("𞴝𞴋𞴆", to: :integer)
   end
 end

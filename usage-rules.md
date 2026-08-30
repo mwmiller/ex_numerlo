@@ -15,6 +15,11 @@ These rules provide guidance for LLM agents and developers when using the `ExNum
 - **Non-Negative Integers (>= 0):** `:mayan`, `:cuneiform`, `:kaktovik`.
 - **Roman Range:** `:roman` is limited to `1..3999`.
 
+### Alphabetic (Letter) Numeral Systems
+- **Alphabet-Based Additive Systems:** `:greek` (1..9999), `:armenian` (1..9999), `:hebrew` (1..999), `:cyrillic` (1..9999). These assign values to letters (e.g., alpha=1, keraia ͵ marks thousands in Greek; ҂ marks thousands in Cyrillic).
+- **Sign-Value Systems:** `:arabic_abjad`, `:tamil_traditional`, `:sinhala_archaic`, `:kharosthi`, `:rumi` are greedy additive systems (glyphs repeat per power of ten); `:siyaq_indic` and `:siyaq_ottoman` use distinct per-place glyphs up to ten-thousands (1..99999).
+- **Auto-Detection Caveat:** These systems use letters of living scripts. Any string composed of Greek/Hebrew/Cyrillic/Arabic letters will be detected as this kind of numeral (e.g., a Hebrew word decodes as gematria). Pass `from:` explicitly when ambiguity matters.
+
 ### Sinhala
 - **Sinhala Lith:** Use `:sinhala` for base-10 Sinhala digits (U+0DE6–0DEF). Digits are unique, so auto-detection works.
 
