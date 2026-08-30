@@ -12,6 +12,7 @@ defmodule ExNumerloPropertyTest do
     :gujarati,
     :oriya,
     :tamil,
+    :sinhala,
     :telugu,
     :kannada,
     :malayalam,

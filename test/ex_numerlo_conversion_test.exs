@@ -14,6 +14,7 @@ defmodule ExNumerloConversionTest do
     :attic,
     :mayan,
     :duodecimal,
+    :sinhala,
     :binary,
     :octal,
     :hexadecimal

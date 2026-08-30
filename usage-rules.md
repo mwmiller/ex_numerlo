@@ -15,6 +15,9 @@ These rules provide guidance for LLM agents and developers when using the `ExNum
 - **Non-Negative Integers (>= 0):** `:mayan`, `:cuneiform`, `:kaktovik`.
 - **Roman Range:** `:roman` is limited to `1..3999`.
 
+### Sinhala
+- **Sinhala Lith:** Use `:sinhala` for base-10 Sinhala digits (U+0DE6–0DEF). Digits are unique, so auto-detection works.
+
 
 ### Specialized Systems
 - **Duodecimal:** Use `:duodecimal` for base-12. Auto-detection requires unique digits (↊ or ↋).

@@ -55,6 +55,13 @@ defmodule ExNumerloTest do
     assert ExNumerlo.convert(123, to: :thai) == {:ok, "๑๒๓"}
   end
 
+  test "encodes and decodes sinhala" do
+    assert {:ok, "෧෨෩"} == ExNumerlo.convert(123, to: :sinhala)
+    assert {:ok, "෦"} == ExNumerlo.convert(0, to: :sinhala)
+    assert {:ok, 123} == ExNumerlo.convert("෧෨෩", from: :sinhala, to: :integer)
+    assert {:ok, 123} == ExNumerlo.convert("෧෨෩", to: :integer)
+  end
+
   test "encodes roman numerals" do
     assert ExNumerlo.convert(1, to: :roman) == {:ok, "I"}
     assert ExNumerlo.convert(14, to: :roman) == {:ok, "XIV"}

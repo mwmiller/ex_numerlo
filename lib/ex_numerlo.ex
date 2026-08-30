@@ -15,7 +15,7 @@ defmodule ExNumerlo do
 
   ### Modern Positional (Base-10)
   `:arabic`, `:arabic_indic`, `:extended_arabic_indic`, `:devanagari`, `:bengali`, `:gurmukhi`,
-  `:gujarati`, `:oriya`, `:tamil`, `:telugu`, `:kannada`, `:malayalam`, `:thai`, `:lao`,
+  `:gujarati`, `:oriya`, `:tamil`, `:sinhala`, `:telugu`, `:kannada`, `:malayalam`, `:thai`, `:lao`,
   `:tibetan`, `:burmese`, `:khmer`, `:mongolian`, `:adlam`, `:balinese`, `:chakma`, `:cham`,
   `:gunjala_gondi`, `:javanese`, `:kayah_li`, `:lepcha`, `:limbu`, `:masaram_gondi`,
   `:meetei_mayek`, `:modi`, `:mro`, `:n_ko`, `:new_tai_lue`, `:nyiakeng_puachue_hmong`,
@@ -70,6 +70,7 @@ defmodule ExNumerlo do
           | :telugu
           | :kannada
           | :malayalam
+          | :sinhala
           | :thai
           | :lao
           | :tibetan
@@ -350,6 +351,14 @@ defmodule ExNumerlo do
       type: :positional,
       range: :all,
       example: "൧൨൩ (123)"
+    },
+    sinhala: %{
+      description:
+        "Sinhala (Lith) script numerals, used primarily for the Sinhala language in Sri Lanka.",
+      base: 10,
+      type: :positional,
+      range: :all,
+      example: "෧෨෩ (123)"
     },
     thai: %{
       description: "Thai script numerals, used alongside Western Arabic numerals in Thailand.",
@@ -759,6 +768,7 @@ defmodule ExNumerlo do
     :telugu,
     :kannada,
     :malayalam,
+    :sinhala,
     :hexadecimal,
     # Generic digits last
     :arabic,
@@ -902,6 +912,7 @@ defmodule ExNumerlo do
   defp system_module(:telugu), do: System.Telugu
   defp system_module(:kannada), do: System.Kannada
   defp system_module(:malayalam), do: System.Malayalam
+  defp system_module(:sinhala), do: System.Sinhala
   defp system_module(:thai), do: System.Thai
   defp system_module(:lao), do: System.Lao
   defp system_module(:tibetan), do: System.Tibetan

@@ -11,6 +11,7 @@ defmodule ExNumerloScriptsTest do
     {:gujarati, 123, "૧૨૩"},
     {:oriya, 123, "୧୨୩"},
     {:tamil, 123, "௧௨௩"},
+    {:sinhala, 123, "෧෨෩"},
     {:telugu, 123, "౧౨౩"},
     {:kannada, 123, "೧೨೩"},
     {:malayalam, 123, "൧൨൩"},

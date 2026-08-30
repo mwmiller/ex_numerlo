@@ -292,3 +292,8 @@ defmodule ExNumerlo.System.NKo do
   @moduledoc false
   use ExNumerlo.System.Positional, base: 0x07C0
 end
+
+defmodule ExNumerlo.System.Sinhala do
+  @moduledoc false
+  use ExNumerlo.System.Positional, base: 0x0DE6
+end
