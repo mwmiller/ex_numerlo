@@ -24,7 +24,7 @@ defmodule ExNumerlo do
   `:toto`, `:vai`, `:wancho`, `:warang_citi`, `:nag_mundari`, `:fullwidth`
 
   ### Historical and Specialized
-  - **Additive:** `:roman` (1-3999), `:aegean`, `:attic`, `:brahmi`
+  - **Additive:** `:roman` (1-3999), `:aegean`, `:attic`, `:egyptian`, `:brahmi`
   - **Hybrid:** `:ethiopic`, `:han` (Chinese/Japanese myriad-based)
   - **Positional (Non-Base-10):** `:mayan` (Base-20), `:kaktovik` (Base-20), `:cuneiform` (Base-60), `:duodecimal` (Base-12)
   - **Programmer Bases:** `:binary` (Base-2), `:octal` (Base-8), `:hexadecimal` (Base-16), `:base32` (Base-32), `:base36` (Base-36)
@@ -125,6 +125,7 @@ defmodule ExNumerlo do
           | :roman
           | :aegean
           | :attic
+          | :egyptian
           | :mayan
           | :ethiopic
           | :cuneiform
@@ -152,6 +153,14 @@ defmodule ExNumerlo do
       type: :additive,
       range: :positive,
       example: "ΔΔ𐅃ΙΙ (27)"
+    },
+    egyptian: %{
+      description:
+        "Ancient Egyptian hieroglyphic numerals. An additive base-10 (sign-value) system using distinct glyphs for powers of ten up to one million.",
+      base: 10,
+      type: :additive,
+      range: :positive,
+      example: "𓍢𓍢𓎆𓎆𓏺𓏺𓏺 (223)"
     },
     mayan: %{
       description:
@@ -718,6 +727,7 @@ defmodule ExNumerlo do
     # Unique/Complex glyphs take priority
     :aegean,
     :attic,
+    :egyptian,
     :mayan,
     :ethiopic,
     :cuneiform,
@@ -985,6 +995,7 @@ defmodule ExNumerlo do
   defp system_module(:roman), do: System.Roman
   defp system_module(:aegean), do: System.Historical.Aegean
   defp system_module(:attic), do: System.Historical.Attic
+  defp system_module(:egyptian), do: System.Historical.Egyptian
   defp system_module(:mayan), do: System.Historical.Mayan
   defp system_module(:ethiopic), do: System.Historical.Ethiopic
   defp system_module(:cuneiform), do: System.Historical.Cuneiform

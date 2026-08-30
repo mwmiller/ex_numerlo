@@ -66,6 +66,7 @@ defmodule ExNumerloPropertyTest do
     :roman,
     :aegean,
     :attic,
+    :egyptian,
     :mayan,
     :duodecimal,
     :binary,

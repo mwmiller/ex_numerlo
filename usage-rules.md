@@ -11,7 +11,7 @@ These rules provide guidance for LLM agents and developers when using the `ExNum
 ## System Specifics and Constraints
 
 ### Historical Systems
-- **Positive Integers Only (> 0):** `:roman`, `:attic`, `:aegean`, `:ethiopic`, `:brahmi`.
+- **Positive Integers Only (> 0):** `:roman`, `:attic`, `:aegean`, `:egyptian`, `:ethiopic`, `:brahmi`.
 - **Non-Negative Integers (>= 0):** `:mayan`, `:cuneiform`, `:kaktovik`.
 - **Roman Range:** `:roman` is limited to `1..3999`.
 

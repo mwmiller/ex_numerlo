@@ -7,6 +7,7 @@ defmodule ExNumerloTest do
   alias ExNumerlo.System.Historical.Aegean
   alias ExNumerlo.System.Historical.Attic
   alias ExNumerlo.System.Historical.Cuneiform
+  alias ExNumerlo.System.Historical.Egyptian
   alias ExNumerlo.System.Historical.Ethiopic
   alias ExNumerlo.System.Historical.Mayan
   alias ExNumerlo.System.Roman
@@ -97,6 +98,17 @@ defmodule ExNumerloTest do
     assert {:ok, 2001} == ExNumerlo.convert("ΧΧΙ", to: :integer)
   end
 
+  test "encodes and decodes egyptian" do
+    assert {:ok, "𓏺"} == ExNumerlo.convert(1, to: :egyptian)
+    assert {:ok, "𓎆"} == ExNumerlo.convert(10, to: :egyptian)
+    assert {:ok, "𓍢𓎆𓎆𓏺𓏺𓏺"} == ExNumerlo.convert(123, to: :egyptian)
+    assert {:ok, "𓁨"} == ExNumerlo.convert(1_000_000, to: :egyptian)
+
+    assert {:ok, 123} == ExNumerlo.convert("𓍢𓎆𓎆𓏺𓏺𓏺", from: :egyptian, to: :integer)
+    assert {:ok, 11} == ExNumerlo.convert("𓏺𓎆", to: :integer)
+    assert {:error, :not_positive} == ExNumerlo.convert(0, to: :egyptian)
+  end
+
   test "encodes and decodes mayan" do
     assert ExNumerlo.convert(20, to: :mayan) == {:ok, "𝋡𝋠"}
     # 13: 𝋭
@@ -116,6 +128,7 @@ defmodule ExNumerloTest do
     refute Roman.detect?("")
     refute Aegean.detect?("")
     refute Attic.detect?("")
+    refute Egyptian.detect?("")
     refute Mayan.detect?("")
     refute Ethiopic.detect?("")
     refute Cuneiform.detect?("")
@@ -163,6 +176,10 @@ defmodule ExNumerloTest do
              ExNumerlo.convert("A", from: :aegean, to: :integer)
 
     assert {:error, :invalid_attic_numeral} == ExNumerlo.convert("A", from: :attic, to: :integer)
+
+    assert {:error, :invalid_egyptian_numeral} ==
+             ExNumerlo.convert("A", from: :egyptian, to: :integer)
+
     assert {:error, :invalid_mayan_numeral} == ExNumerlo.convert("A", from: :mayan, to: :integer)
 
     assert {:error, :invalid_ethiopic_numeral} ==

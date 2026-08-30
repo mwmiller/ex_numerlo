@@ -68,6 +68,61 @@ defmodule ExNumerlo.System.Historical do
     end
   end
 
+  defmodule Egyptian do
+    @moduledoc false
+    @behaviour ExNumerlo.System
+
+    @mapping [
+      {1_000_000, 0x13068},
+      {100_000, 0x13190},
+      {10_000, 0x130AD},
+      {1000, 0x131BC},
+      {100, 0x13362},
+      {10, 0x13386},
+      {1, 0x133FA}
+    ]
+
+    @impl ExNumerlo.System
+    def encode(n, opts \\ [])
+    def encode(n, _opts) when is_integer(n) and n > 0, do: {:ok, do_encode(n, @mapping)}
+    def encode(n, _opts) when is_integer(n), do: {:error, :not_positive}
+
+    defp do_encode(0, _), do: ""
+
+    defp do_encode(n, [{val, cp} | rest]) do
+      count = div(n, val)
+      remainder = rem(n, val)
+      # Egyptian numerals repeat the glyph for each power of ten.
+      String.duplicate(<<cp::utf8>>, count) <> do_encode(remainder, rest)
+    end
+
+    @impl ExNumerlo.System
+    def decode(string, _opts \\ []) do
+      string
+      |> String.to_charlist()
+      |> Enum.reduce_while({:ok, 0}, fn cp, {:ok, acc} ->
+        case find_value(cp) do
+          {:ok, val} -> {:cont, {:ok, acc + val}}
+          {:error, reason} -> {:halt, {:error, reason}}
+        end
+      end)
+    end
+
+    defp find_value(cp) do
+      Enum.find_value(@mapping, {:error, :invalid_egyptian_numeral}, fn {val, sign} ->
+        if sign == cp, do: {:ok, val}
+      end)
+    end
+
+    @impl ExNumerlo.System
+    def detect?(string) do
+      case String.to_charlist(string) do
+        [] -> false
+        chars -> Enum.all?(chars, fn cp -> match?({:ok, _}, find_value(cp)) end)
+      end
+    end
+  end
+
   defmodule Attic do
     @moduledoc false
     @behaviour ExNumerlo.System

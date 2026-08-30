@@ -12,6 +12,7 @@ defmodule ExNumerloConversionTest do
     :roman,
     :aegean,
     :attic,
+    :egyptian,
     :mayan,
     :duodecimal,
     :sinhala,
