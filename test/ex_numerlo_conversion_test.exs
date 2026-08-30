@@ -17,7 +17,9 @@ defmodule ExNumerloConversionTest do
     :sinhala,
     :binary,
     :octal,
-    :hexadecimal
+    :hexadecimal,
+    :base32,
+    :base36
   ]
 
   describe "round-trip conversions" do

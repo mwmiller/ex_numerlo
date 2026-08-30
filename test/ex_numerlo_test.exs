@@ -245,4 +245,32 @@ defmodule ExNumerloTest do
     assert {:error, :invalid_digit} == ExNumerlo.convert("8", from: :octal, to: :integer)
     assert {:error, :invalid_digit} == ExNumerlo.convert("G", from: :hexadecimal, to: :integer)
   end
+
+  test "encodes and decodes base32" do
+    assert {:ok, "0"} == ExNumerlo.convert(0, to: :base32)
+    assert {:ok, "A"} == ExNumerlo.convert(10, to: :base32)
+    assert {:ok, "V"} == ExNumerlo.convert(31, to: :base32)
+    assert {:ok, "10"} == ExNumerlo.convert(32, to: :base32)
+    assert {:ok, "3R"} == ExNumerlo.convert(123, to: :base32)
+
+    assert {:ok, 123} == ExNumerlo.convert("3R", from: :base32, to: :integer)
+    assert {:ok, 123} == ExNumerlo.convert("3R", to: :integer)
+  end
+
+  test "encodes and decodes base36" do
+    assert {:ok, "0"} == ExNumerlo.convert(0, to: :base36)
+    assert {:ok, "Z"} == ExNumerlo.convert(35, to: :base36)
+    assert {:ok, "10"} == ExNumerlo.convert(36, to: :base36)
+    assert {:ok, "3F"} == ExNumerlo.convert(123, to: :base36)
+    assert {:ok, "X0"} == ExNumerlo.convert(1188, to: :base36)
+
+    assert {:ok, 123} == ExNumerlo.convert("3F", from: :base36, to: :integer)
+    assert {:ok, 1188} == ExNumerlo.convert("X0", to: :integer)
+  end
+
+  test "base32 and base36 auto-detection requires unique letters" do
+    assert {:error, :invalid_digit} == ExNumerlo.convert("W2", from: :base32, to: :integer)
+    assert {:ok, 68} == ExNumerlo.convert("1W", to: :integer)
+    assert {:ok, 60} == ExNumerlo.convert("1S", to: :integer)
+  end
 end

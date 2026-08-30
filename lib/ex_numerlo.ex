@@ -27,7 +27,7 @@ defmodule ExNumerlo do
   - **Additive:** `:roman` (1-3999), `:aegean`, `:attic`, `:brahmi`
   - **Hybrid:** `:ethiopic`, `:han` (Chinese/Japanese myriad-based)
   - **Positional (Non-Base-10):** `:mayan` (Base-20), `:kaktovik` (Base-20), `:cuneiform` (Base-60), `:duodecimal` (Base-12)
-  - **Programmer Bases:** `:binary` (Base-2), `:octal` (Base-8), `:hexadecimal` (Base-16)
+  - **Programmer Bases:** `:binary` (Base-2), `:octal` (Base-8), `:hexadecimal` (Base-16), `:base32` (Base-32), `:base36` (Base-36)
   - **Specialized:** `:han_positional`, `:suzhou`, `:rod`, `:math_bold`, `:math_double_struck`, `:math_monospace`, `:math_sans`, `:math_sans_bold`
 
   ## Usage Examples
@@ -132,6 +132,8 @@ defmodule ExNumerlo do
           | :binary
           | :octal
           | :hexadecimal
+          | :base32
+          | :base36
 
   @systems_metadata %{
     # Additive and Hybrid systems
@@ -221,6 +223,20 @@ defmodule ExNumerlo do
       type: :positional,
       range: :all,
       example: "7B (123)"
+    },
+    base32: %{
+      description: "Base-32 system using digits 0-9 and letters A-V.",
+      base: 32,
+      type: :positional,
+      range: :all,
+      example: "3R (123)"
+    },
+    base36: %{
+      description: "Base-36 system using digits 0-9 and letters A-Z.",
+      base: 36,
+      type: :positional,
+      range: :all,
+      example: "3F (123)"
     },
     # Math
     math_bold: %{
@@ -770,6 +786,8 @@ defmodule ExNumerlo do
     :malayalam,
     :sinhala,
     :hexadecimal,
+    :base32,
+    :base36,
     # Generic digits last
     :arabic,
     :arabic_indic,
@@ -974,5 +992,7 @@ defmodule ExNumerlo do
   defp system_module(:binary), do: System.Binary
   defp system_module(:octal), do: System.Octal
   defp system_module(:hexadecimal), do: System.Hexadecimal
+  defp system_module(:base32), do: System.Base32
+  defp system_module(:base36), do: System.Base36
   defp system_module(_), do: nil
 end

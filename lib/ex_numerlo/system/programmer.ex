@@ -122,3 +122,19 @@ defmodule ExNumerlo.System.Hexadecimal do
     digits: ~c"0123456789ABCDEF",
     unique_digits: ~c"ABCDEF"
 end
+
+defmodule ExNumerlo.System.Base32 do
+  @moduledoc false
+  use ExNumerlo.System.Programmer,
+    base: 32,
+    digits: ~c"0123456789ABCDEFGHIJKLMNOPQRSTUV",
+    unique_digits: ~c"ABCDEFGHIJKLMNOPQRSTUV"
+end
+
+defmodule ExNumerlo.System.Base36 do
+  @moduledoc false
+  use ExNumerlo.System.Programmer,
+    base: 36,
+    digits: ~c"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    unique_digits: ~c"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+end

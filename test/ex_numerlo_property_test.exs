@@ -70,7 +70,9 @@ defmodule ExNumerloPropertyTest do
     :duodecimal,
     :binary,
     :octal,
-    :hexadecimal
+    :hexadecimal,
+    :base32,
+    :base36
   ]
 
   describe "auto-detection" do
@@ -152,6 +154,12 @@ defmodule ExNumerloPropertyTest do
       :hexadecimal -> not String.match?(encoded, ~r/[A-F]/)
       :binary -> true
       :octal -> true
+      # base32 auto-detects correctly only when the encoded string contains
+      # a letter in G..V (otherwise it overlaps with :arabic or :hexadecimal).
+      :base32 -> not String.match?(encoded, ~r/[G-V]/)
+      # base36 auto-detects correctly only when the encoded string contains
+      # a letter in W..Z (otherwise it overlaps with :arabic, :hexadecimal, or :base32).
+      :base36 -> not String.match?(encoded, ~r/[W-Z]/)
       _ -> false
     end
   end
