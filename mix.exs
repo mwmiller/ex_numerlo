@@ -32,7 +32,12 @@ defmodule ExNumerlo.MixProject do
 
   defp aliases do
     [
-      precommit: ["format --check-formatted", "credo --strict", "test"]
+      precommit: [
+        "format --check-formatted",
+        "compile --force --warnings-as-errors",
+        "credo --strict",
+        "test"
+      ]
     ]
   end
 

@@ -20,6 +20,10 @@ These rules provide guidance for LLM agents and developers when using the `ExNum
 - **Duodecimal:** Use `:duodecimal` for base-12. Auto-detection requires unique digits (↊ or ↋).
 - **Mathematical Styles:** positional styles `:math_bold`, `:math_double_struck`, `:math_monospace`, `:math_sans`, and `:math_sans_bold`.
 
+### Programmer Bases
+- **Binary/Octal/Hexadecimal:** Use `:binary` (base-2), `:octal` (base-8), and `:hexadecimal` (base-16, digits 0-9 and A-F).
+- **Auto-Detection:** `:hexadecimal` auto-detects when a string contains A-F letters. `:binary` and `:octal` share the ASCII digit set with `:arabic`, so without unique digits they auto-detect as `:arabic`; pass `from:` explicitly to disambiguate.
+
 ### Formatting Features
 - **Separators:** Supported only for positional systems via the `:separator` option.
 - **Sign Handling:** Positional systems support `+` and `-` prefixes during decoding.

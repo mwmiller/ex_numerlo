@@ -27,6 +27,7 @@ defmodule ExNumerlo do
   - **Additive:** `:roman` (1-3999), `:aegean`, `:attic`, `:brahmi`
   - **Hybrid:** `:ethiopic`, `:han` (Chinese/Japanese myriad-based)
   - **Positional (Non-Base-10):** `:mayan` (Base-20), `:kaktovik` (Base-20), `:cuneiform` (Base-60), `:duodecimal` (Base-12)
+  - **Programmer Bases:** `:binary` (Base-2), `:octal` (Base-8), `:hexadecimal` (Base-16)
   - **Specialized:** `:han_positional`, `:suzhou`, `:rod`, `:math_bold`, `:math_double_struck`, `:math_monospace`, `:math_sans`, `:math_sans_bold`
 
   ## Usage Examples
@@ -127,6 +128,9 @@ defmodule ExNumerlo do
           | :ethiopic
           | :cuneiform
           | :duodecimal
+          | :binary
+          | :octal
+          | :hexadecimal
 
   @systems_metadata %{
     # Additive and Hybrid systems
@@ -194,6 +198,28 @@ defmodule ExNumerlo do
       type: :positional,
       range: :all,
       example: "１２３ (123)"
+    },
+    # Programmer bases
+    binary: %{
+      description: "Base-2 (binary) system using the standard digits 0 and 1.",
+      base: 2,
+      type: :positional,
+      range: :all,
+      example: "1111011 (123)"
+    },
+    octal: %{
+      description: "Base-8 (octal) system using the standard digits 0-7.",
+      base: 8,
+      type: :positional,
+      range: :all,
+      example: "173 (123)"
+    },
+    hexadecimal: %{
+      description: "Base-16 (hexadecimal) system using digits 0-9 and letters A-F.",
+      base: 16,
+      type: :positional,
+      range: :all,
+      example: "7B (123)"
     },
     # Math
     math_bold: %{
@@ -733,11 +759,14 @@ defmodule ExNumerlo do
     :telugu,
     :kannada,
     :malayalam,
+    :hexadecimal,
     # Generic digits last
     :arabic,
     :arabic_indic,
     :extended_arabic_indic,
-    :duodecimal
+    :duodecimal,
+    :binary,
+    :octal
   ]
 
   @doc """
@@ -931,5 +960,8 @@ defmodule ExNumerlo do
   defp system_module(:ethiopic), do: System.Historical.Ethiopic
   defp system_module(:cuneiform), do: System.Historical.Cuneiform
   defp system_module(:duodecimal), do: System.Duodecimal
+  defp system_module(:binary), do: System.Binary
+  defp system_module(:octal), do: System.Octal
+  defp system_module(:hexadecimal), do: System.Hexadecimal
   defp system_module(_), do: nil
 end

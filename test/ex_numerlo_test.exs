@@ -192,4 +192,50 @@ defmodule ExNumerloTest do
     assert {:error, :unknown_system} == ExNumerlo.convert(1, to: :unknown)
     assert {:error, :unknown_system} == ExNumerlo.convert("1", from: :unknown, to: :integer)
   end
+
+  test "encodes and decodes binary" do
+    assert {:ok, "0"} == ExNumerlo.convert(0, to: :binary)
+    assert {:ok, "1"} == ExNumerlo.convert(1, to: :binary)
+    assert {:ok, "101"} == ExNumerlo.convert(5, to: :binary)
+    assert {:ok, "1111011"} == ExNumerlo.convert(123, to: :binary)
+
+    assert {:ok, 0} == ExNumerlo.convert("0", from: :binary, to: :integer)
+    assert {:ok, 123} == ExNumerlo.convert("1111011", from: :binary, to: :integer)
+  end
+
+  test "encodes and decodes octal" do
+    assert {:ok, "0"} == ExNumerlo.convert(0, to: :octal)
+    assert {:ok, "173"} == ExNumerlo.convert(123, to: :octal)
+
+    assert {:ok, 123} == ExNumerlo.convert("173", from: :octal, to: :integer)
+  end
+
+  test "encodes and decodes hexadecimal" do
+    assert {:ok, "0"} == ExNumerlo.convert(0, to: :hexadecimal)
+    assert {:ok, "7B"} == ExNumerlo.convert(123, to: :hexadecimal)
+    assert {:ok, "FF"} == ExNumerlo.convert(255, to: :hexadecimal)
+    assert {:ok, "2A"} == ExNumerlo.convert(42, to: :hexadecimal)
+
+    assert {:ok, 123} == ExNumerlo.convert("7B", from: :hexadecimal, to: :integer)
+    assert {:ok, 255} == ExNumerlo.convert("FF", from: :hexadecimal, to: :integer)
+    assert {:ok, 42} == ExNumerlo.convert("2A", from: :hexadecimal, to: :integer)
+  end
+
+  test "hexadecimal auto-detection" do
+    assert {:ok, 255} == ExNumerlo.convert("FF", to: :integer)
+    assert {:ok, 42} == ExNumerlo.convert("2A", to: :integer)
+  end
+
+  test "programmer bases support negative numbers and separators" do
+    assert {:ok, "-FF"} == ExNumerlo.convert(-255, to: :hexadecimal)
+    assert {:ok, -255} == ExNumerlo.convert("-FF", from: :hexadecimal, to: :integer)
+    assert {:ok, "10,101"} == ExNumerlo.convert(21, to: :binary, separator: ",")
+    assert {:ok, 21} == ExNumerlo.convert("10,101", from: :binary, to: :integer, separator: ",")
+  end
+
+  test "programmer bases reject invalid digits" do
+    assert {:error, :invalid_digit} == ExNumerlo.convert("2", from: :binary, to: :integer)
+    assert {:error, :invalid_digit} == ExNumerlo.convert("8", from: :octal, to: :integer)
+    assert {:error, :invalid_digit} == ExNumerlo.convert("G", from: :hexadecimal, to: :integer)
+  end
 end

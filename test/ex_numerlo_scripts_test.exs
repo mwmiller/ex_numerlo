@@ -64,43 +64,48 @@ defmodule ExNumerloScriptsTest do
     {:math_double_struck, 123, "𝟙𝟚𝟛"},
     {:math_monospace, 123, "𝟷𝟸𝟹"},
     {:math_sans, 123, "𝟣𝟤𝟥"},
-    {:math_sans_bold, 123, "𝟭𝟮𝟯"}
+    {:math_sans_bold, 123, "𝟭𝟮𝟯"},
+    {:hexadecimal, 123, "7B"}
   ]
 
-  test "round-trip for all positional systems" do
-    for {sys, n, expected} <- @examples do
-      assert {:ok, res} = ExNumerlo.convert(n, to: sys), "Failed to encode #{sys}"
+  describe "positional systems" do
+    test "round-trip for all positional systems" do
+      for {sys, n, expected} <- @examples do
+        assert {:ok, res} = ExNumerlo.convert(n, to: sys), "Failed to encode #{sys}"
 
-      assert res == expected,
-             "Encoded result mismatch for #{sys}: expected #{inspect(expected)}, got #{inspect(res)}"
+        assert res == expected,
+               "Encoded result mismatch for #{sys}: expected #{inspect(expected)}, got #{inspect(res)}"
 
-      assert {:ok, ^n} = ExNumerlo.convert(expected, from: sys, to: :integer),
-             "Failed to decode #{sys}"
+        assert {:ok, ^n} = ExNumerlo.convert(expected, from: sys, to: :integer),
+               "Failed to decode #{sys}"
+      end
     end
-  end
 
-  test "auto-detection for all positional systems" do
-    for {sys, n, expected} <- @examples do
-      # Systems with unique glyphs should auto-detect correctly.
-      # Arabic is the default fallback for 0-9 digits.
-      unless sys == :arabic do
-        case ExNumerlo.convert(expected, to: :integer) do
-          {:ok, val} ->
-            assert val == n,
-                   "Auto-detect value mismatch for #{sys} (#{inspect(expected)}): expected #{n}, got #{val}"
+    test "auto-detection for all positional systems" do
+      for {sys, n, expected} <- @examples do
+        # Systems with unique glyphs should auto-detect correctly.
+        # Arabic is the default fallback for 0-9 digits.
+        unless sys == :arabic do
+          case ExNumerlo.convert(expected, to: :integer) do
+            {:ok, val} ->
+              assert val == n,
+                     "Auto-detect value mismatch for #{sys} (#{inspect(expected)}): expected #{n}, got #{val}"
 
-          {:error, reason} ->
-            flunk("Failed to auto-detect #{sys} (#{inspect(expected)}): #{inspect(reason)}")
+            {:error, reason} ->
+              flunk("Failed to auto-detect #{sys} (#{inspect(expected)}): #{inspect(reason)}")
+          end
         end
       end
     end
   end
 
-  test "han hybrid numeral system" do
-    assert ExNumerlo.convert(12_345, to: :han) == {:ok, "一万二千三百四十五"}
-    assert ExNumerlo.convert(1001, to: :han) == {:ok, "一千零一"}
-    assert ExNumerlo.convert(10_000, to: :han) == {:ok, "一万"}
-    assert ExNumerlo.convert(0, to: :han) == {:ok, "零"}
-    assert ExNumerlo.convert(-123, to: :han) == {:ok, "负一百二十三"}
+  describe "han hybrid numeral system" do
+    test "encodes with myriad-based multiplicative notation" do
+      assert ExNumerlo.convert(12_345, to: :han) == {:ok, "一万二千三百四十五"}
+      assert ExNumerlo.convert(1001, to: :han) == {:ok, "一千零一"}
+      assert ExNumerlo.convert(10_000, to: :han) == {:ok, "一万"}
+      assert ExNumerlo.convert(0, to: :han) == {:ok, "零"}
+      assert ExNumerlo.convert(-123, to: :han) == {:ok, "负一百二十三"}
+    end
   end
 end
